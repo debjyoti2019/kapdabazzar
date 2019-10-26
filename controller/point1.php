@@ -27,6 +27,44 @@ $response = array(
 	'truncated_key'   => substr( $ck, -7 ),
 );
 
+
+
+
+$query=$wpdb->get_results(
+    "SELECT * FROM wp_keys WHERE uid='$userid'"
+
+);
+
+if (empty($query)){
+
+
+
+
+
+$reobtain=array(
+	'uid' => $userid,
+	'ck' => $ck,
+	'cs' => $cs,
+);
+
+try{
+$wpdb->insert(
+	'wp_keys',
+	$reobtain,
+	array(
+		'%d',
+		'%s',
+		'%s',
+		
+	)
+);
+}
+
+catch(Exception $e){
+
+
+}
+
 $data = array(
 					'user_id'         => $userid,
 					'description'     => $description,
@@ -66,5 +104,14 @@ $keyid=$wpdb->insert_id;
    else {
 	header('Content-Type: application/json');
 	echo 'BAD REQUEST';
+}
+
+}
+else{
+
+	$q=$query[0];
+	$response['consumer_key']= $q->ck;
+	$response['consumer_secret']= $q->cs;
+	echo json_encode($response);
 }
 ?>
